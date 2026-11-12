@@ -1,0 +1,124 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    static FastScanner fs = new FastScanner(System.in);
+    static PrintWriter out = new PrintWriter(System.out);
+
+    static final int MOD = 1_000_000_007;
+    static final long INF = Long.MAX_VALUE / 4;
+
+    public static void main(String[] args) throws Exception {
+
+        // int t = 1;
+        // // t = fs.nextInt(); // Uncomment for multiple test cases
+
+        // while (t-- > 0) {
+        //     solve();
+        // }
+
+        solve();
+
+        out.flush();
+    }
+
+    static void solve() {
+
+        int n = fs.nextInt();
+
+        List<List<Integer>> adj = new ArrayList<>();
+
+        for(int i=0;i<=n;i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i=2;i<=n;i++){
+            int val = fs.nextInt();
+            adj.get(i).add(val);
+            adj.get(val).add(i);
+        }
+        // Your solution here
+
+        Solution sol = new Solution();
+        sol.dfs(1, adj);
+        int [] tin = sol.tin;
+        int [] tout = sol.tout;
+
+        for(int i=1;i<=n;i++){
+            out.print((tout[i] - tin[i] -1) + " ");
+        }
+
+    }
+
+    static class Solution{
+
+        int [] tin = new int[200005];
+        int [] tout = new int[200005];
+        int timer=0;
+        int [] parent= new int [200005];
+        int [] iter = new int [200005];
+        int [] stack = new int [200005];
+        void dfs(int root, List<List<Integer>>adj){
+
+            
+            int top = 0;
+            stack[top++] = root;
+            parent[root]=-1;
+            while(top>0){
+                int node = stack[top-1];
+                
+                if(iter[node]==0){
+                    tin[node]=timer++;
+                }
+                if(iter[node]<adj.get(node).size()){
+                    int child = adj.get(node).get(iter[node]++);
+                    if(child == parent[node])continue;
+                    parent[child]=node;
+                    stack[top++]=child;
+                }
+                else{
+                    tout[node]=timer;
+                    top--;
+                }
+            }
+        }
+    }
+
+    // ================= FAST SCANNER =================
+
+    static class FastScanner {
+        BufferedReader br;
+        StringTokenizer st;
+
+        FastScanner(InputStream is) {
+            br = new BufferedReader(new InputStreamReader(is));
+        }
+
+        String next() {
+            while (st == null || !st.hasMoreTokens()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() {
+            return Integer.parseInt(next());
+        }
+
+        long nextLong() {
+            return Long.parseLong(next());
+        }
+
+        double nextDouble() {
+            return Double.parseDouble(next());
+        }
+
+        String nextLine() throws IOException {
+            return br.readLine();
+        }
+    }
+}
